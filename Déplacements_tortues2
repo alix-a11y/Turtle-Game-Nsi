@@ -1,0 +1,78 @@
+import turtle
+
+# Création de l'écran
+ecran = turtle.Screen()
+ecran.title("Jeu des tortues")
+
+# Première tortue (Bleue)
+tortue1 = turtle.Turtle()
+tortue1.shape("turtle")
+tortue1.color("blue")
+tortue1.penup()
+tortue1.goto(-100, 0)
+tortue1.pendown()
+
+# Deuxième tortue (Rouge)
+tortue2 = turtle.Turtle()
+tortue2.shape("turtle")
+tortue2.color("red")
+tortue2.penup()
+tortue2.goto(100, 0)
+tortue2.pendown()
+
+# -------------------------
+# CONTRÔLES TORTUE 1
+# -------------------------
+def t1_gauche():
+    tortue1.setheading(180)
+    tortue1.forward(10)
+
+def t1_droite():
+    tortue1.setheading(0)
+    tortue1.forward(10)
+
+def t1_haut():
+    tortue1.setheading(90)
+    tortue1.forward(10)
+
+def t1_bas():
+    tortue1.setheading(270)
+    tortue1.forward(10)
+
+# -------------------------
+# CONTRÔLES TORTUE 2
+# -------------------------
+def t2_gauche():
+    tortue2.setheading(180)
+    tortue2.forward(10)
+
+def t2_droite():
+    tortue2.setheading(0)
+    tortue2.forward(10)
+
+def t2_haut():
+    tortue2.setheading(90)
+    tortue2.forward(10)
+
+def t2_bas():
+    tortue2.setheading(270)
+    tortue2.forward(10)
+
+# -------------------------
+# ASSOCIATION DES TOUCHES
+# -------------------------
+ecran.listen() # On dit à l'écran d'écouter le clavier
+
+# Touches Tortue 1 (ZQSD)
+ecran.onkeypress(t1_haut, "z")
+ecran.onkeypress(t1_bas, "s")
+ecran.onkeypress(t1_gauche, "q")
+ecran.onkeypress(t1_droite, "d")
+
+# Touches Tortue 2 (OKLM)
+ecran.onkeypress(t2_haut, "o")
+ecran.onkeypress(t2_bas, "l")
+ecran.onkeypress(t2_gauche, "k")
+ecran.onkeypress(t2_droite, "m")
+
+turtle.mainloop()
