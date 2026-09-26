@@ -1,0 +1,185 @@
+import turtle
+
+# Création de l'écran
+ecran = turtle.Screen()
+ecran.title("Jeu des tortues")
+
+# Première tortue
+tortue1 = turtle.Turtle()
+tortue1.shape("turtle")
+tortue1.color("blue")
+tortue1.penup()
+tortue1.goto(-100, 0)
+tortue1.pendown()
+
+# Deuxième tortue
+tortue2 = turtle.Turtle()
+tortue2.shape("turtle")
+tortue2.color("red")
+tortue2.penup()
+tortue2.goto(100, 0)
+tortue2.pendown()
+
+# Listes contenant les anciennes positions
+positions1 = []
+positions2 = []
+
+# Les tortues sont-elles encore en jeu ?
+active1 = True
+active2 = True
+
+
+# -------------------------
+# COLLISIONS 
+# -------------------------
+
+def touche_un_trait1():
+    # Trace de la tortue 1
+    for position in positions1[:-2]:
+        if tortue1.distance(position) < 8:
+            return True
+
+    # Trace de la tortue 2
+    for position in positions2:
+        if tortue1.distance(position) < 8:
+            return True
+
+    return False
+
+
+def touche_un_trait2():
+    # Trace de la tortue 1
+    for position in positions1:
+        if tortue2.distance(position) < 8:
+            return True
+
+    # Trace de la tortue 2
+    for position in positions2[:-1]:
+        if tortue2.distance(position) < 8:
+            return True
+
+    return False
+
+
+# -------------------------
+# CONTRÔLES 
+# -------------------------
+# ANNOTATION : On a ajouté "if active1:" et "if active2:". 
+# Cela signifie : "Si la tortue est active (vivante), alors on l'autorise à tourner et avancer."
+# Si elle est morte (False), le code ne fait rien quand on appuie sur la touche.
+
+# -- Tortue 1 --
+def t1_gauche():
+    if active1:
+        tortue1.setheading(180)
+        tortue1.forward(10)
+
+def t1_droite():
+    if active1:
+        tortue1.setheading(0)
+        tortue1.forward(10)
+
+def t1_haut():
+    if active1:
+        tortue1.setheading(90)
+        tortue1.forward(10)
+
+def t1_bas():
+    if active1:
+        tortue1.setheading(270)
+        tortue1.forward(10)
+
+# -- Tortue 2 --
+def t2_gauche():
+    if active2:
+        tortue2.setheading(180)
+        tortue2.forward(10)
+
+def t2_droite():
+    if active2:
+        tortue2.setheading(0)
+        tortue2.forward(10)
+
+def t2_haut():
+    if active2:
+        tortue2.setheading(90)
+        tortue2.forward(10)
+
+def t2_bas():
+    if active2:
+        tortue2.setheading(270)
+        tortue2.forward(10)
+
+
+# -------------------------
+# ASSOCIATION DES TOUCHES 
+# -------------------------
+ecran.listen() 
+
+# Touches Tortue 1 (ZQSD)
+ecran.onkeypress(t1_haut, "z")
+ecran.onkeypress(t1_bas, "s")
+ecran.onkeypress(t1_gauche, "q")
+ecran.onkeypress(t1_droite, "d")
+
+# Touches Tortue 2 (OKLM)
+ecran.onkeypress(t2_haut, "o")
+ecran.onkeypress(t2_bas, "l")
+ecran.onkeypress(t2_gauche, "k")
+ecran.onkeypress(t2_droite, "m")
+
+
+# -------------------------
+# BOUCLES DU JEU 
+# -------------------------
+
+def deplacement1():
+    global active1
+
+    if not active1:
+        return
+
+    # Vérification de collision
+    if touche_un_trait1():
+        active1 = False
+        tortue1.color("black")
+        print("La tortue bleue a perdu !")
+        return
+
+    nouvelle_position = tortue1.pos()
+
+    if len(positions1) == 0 or positions1[-1] != nouvelle_position:
+        positions1.append(nouvelle_position)
+
+    ecran.ontimer(deplacement1, 10)
+
+
+def deplacement2():
+    global active2
+
+    if not active2:
+        return
+
+    # Vérification de collision
+    if touche_un_trait2():
+        active2 = False
+        tortue2.color("black")
+        print("La tortue rouge a perdu !")
+        return
+
+    nouvelle_position = tortue2.pos()
+
+    if len(positions2) == 0 or positions2[-1] != nouvelle_position:
+        positions2.append(nouvelle_position)
+
+    ecran.ontimer(deplacement2, 10)
+
+
+# -------------------------
+# LANCEMENT DU JEU
+# -------------------------
+
+deplacement1()
+deplacement2()
+
+turtle.mainloop()
