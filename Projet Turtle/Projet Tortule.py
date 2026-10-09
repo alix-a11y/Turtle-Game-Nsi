@@ -1,0 +1,135 @@
+import turtle
+
+# Création de l'écran
+ecran = turtle.Screen()
+ecran.title("Jeu des tortues")
+
+# Première tortue (Bleue)
+tortue1 = turtle.Turtle()
+tortue1.shape("turtle")
+tortue1.color("blue")
+tortue1.penup()
+tortue1.goto(-100, 0)
+tortue1.pendown()
+
+# Deuxième tortue (Rouge)
+tortue2 = turtle.Turtle()
+tortue2.shape("turtle")
+tortue2.color("red")
+tortue2.penup()
+tortue2.goto(100, 0)
+tortue2.setheading(180) # On la fait regarder vers la gauche au début
+tortue2.pendown()
+
+# Listes contenant les anciennes positions
+positions1 = []
+positions2 = []
+
+# Les tortues sont-elles encore en jeu ?
+active1 = True
+active2 = True
+vitesse = 2 # Vitesse d'avancement des tortues
+
+
+# -------------------------
+# COLLISIONS
+# -------------------------
+
+def touche_un_trait1():
+    # On ignore les 10 dernières positions pour ne pas que la tortue entre en collision avec elle-même instantanément
+    for position in positions1[:-10]:
+        if tortue1.distance(position) < 5:
+            return True
+
+    for position in positions2:
+        if tortue1.distance(position) < 5:
+            return True
+    return False
+
+def touche_un_trait2():
+    for position in positions2[:-10]:
+        if tortue2.distance(position) < 5:
+            return True
+
+    for position in positions1:
+        if tortue2.distance(position) < 5:
+            return True
+    return False
+
+
+# -------------------------
+# CONTRÔLES (Changement de direction uniquement)
+# -------------------------
+
+# Joueur 1 (ZQSD)
+def t1_haut(): tortue1.setheading(90)
+def t1_bas(): tortue1.setheading(270)
+def t1_gauche(): tortue1.setheading(180)
+def t1_droite(): tortue1.setheading(0)
+
+# Joueur 2 (OKLM)
+def t2_haut(): tortue2.setheading(90)
+def t2_bas(): tortue2.setheading(270)
+def t2_gauche(): tortue2.setheading(180)
+def t2_droite(): tortue2.setheading(0)
+
+# Association des touches
+ecran.listen()
+ecran.onkeypress(t1_haut, "z")
+ecran.onkeypress(t1_bas, "s")
+ecran.onkeypress(t1_gauche, "q")
+ecran.onkeypress(t1_droite, "d")
+
+ecran.onkeypress(t2_haut, "o")
+ecran.onkeypress(t2_bas, "l")
+ecran.onkeypress(t2_gauche, "k")
+ecran.onkeypress(t2_droite, "m")
+
+
+# -------------------------
+# BOUCLES DE DÉPLACEMENT
+# -------------------------
+
+def deplacement1():
+    global active1
+    if not active1:
+        return
+
+    ancienne_position = tortue1.pos()
+    tortue1.forward(vitesse) # La tortue avance toute seule
+
+    if touche_un_trait1():
+        active1 = False
+        tortue1.color("black")
+        print("La tortue bleue a perdu !")
+        return
+
+    positions1.append(ancienne_position)
+    ecran.ontimer(deplacement1, 20)
+
+def deplacement2():
+    global active2
+    if not active2:
+        return
+
+    ancienne_position = tortue2.pos()
+    tortue2.forward(vitesse) # La tortue avance toute seule
+
+    if touche_un_trait2():
+        active2 = False
+        tortue2.color("black")
+        print("La tortue rouge a perdu !")
+        return
+
+    positions2.append(ancienne_position)
+    ecran.ontimer(deplacement2, 20)
+
+
+# -------------------------
+# LANCEMENT DU JEU
+# -------------------------
+
+deplacement1()
+deplacement2()
+
+turtle.mainloop()

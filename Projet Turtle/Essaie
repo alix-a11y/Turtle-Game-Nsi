@@ -1,0 +1,155 @@
+import turtle
+
+# Création de l'écran
+ecran = turtle.Screen()
+ecran.title("Jeu des tortues")
+ecran.setup(1470, 956)
+
+# Enregistrement direct des images déjà traitées
+personnages = [
+    "transparent_Minotaure.gif",
+    "transparent_Thésée.gif",
+    "transparent_Zeus.gif"
+]
+
+for p in personnages:
+    ecran.addshape(p)
+
+# Image de fond définitive
+ecran.bgpic("Image.gif")
+
+# Paramètres de tracé
+turtle.pensize(15)
+
+# Première tortue
+tortue1 = turtle.Turtle()
+tortue1.shape("transparent_Minotaure.gif")
+tortue1.penup()
+tortue1.teleport(-300.0, 0.0)
+tortue1.pendown()
+
+# Deuxième tortue
+tortue2 = turtle.Turtle()
+tortue2.shape("transparent_Thésée.gif")
+tortue2.penup()
+tortue2.teleport(300.0, 0.0)
+tortue2.pendown()
+
+# Historique des positions
+positions1 = []
+positions2 = []
+
+active1 = True
+active2 = True
+
+# -------------------------
+# COLLISIONS 
+# -------------------------
+
+def touche_un_trait1():
+    for position in positions1[:-2]:
+        if tortue1.distance(position) < 8:
+            return True
+    for position in positions2:
+        if tortue1.distance(position) < 8:
+            return True
+    return False
+
+def touche_un_trait2():
+    for position in positions1:
+        if tortue2.distance(position) < 8:
+            return True
+    for position in positions2[:-1]:
+        if tortue2.distance(position) < 8:
+            return True
+    return False
+
+# -------------------------
+# CONTRÔLES 
+# -------------------------
+
+def t1_gauche():
+    if active1:
+        tortue1.setheading(180)
+        tortue1.forward(10)
+
+def t1_droite():
+    if active1:
+        tortue1.setheading(0)
+        tortue1.forward(10)
+
+def t1_haut():
+    if active1:
+        tortue1.setheading(90)
+        tortue1.forward(10)
+
+def t1_bas():
+    if active1:
+        tortue1.setheading(270)
+        tortue1.forward(10)
+
+def t2_gauche():
+    if active2:
+        tortue2.setheading(180)
+        tortue2.forward(10)
+
+def t2_droite():
+    if active2:
+        tortue2.setheading(0)
+        tortue2.forward(10)
+
+def t2_haut():
+    if active2:
+        tortue2.setheading(90)
+        tortue2.forward(10)
+
+def t2_bas():
+    if active2:
+        tortue2.setheading(270)
+        tortue2.forward(10)
+
+# Association des touches
+ecran.listen()
+ecran.onkeypress(t1_haut, "z")
+ecran.onkeypress(t1_bas, "s")
+ecran.onkeypress(t1_gauche, "q")
+ecran.onkeypress(t1_droite, "d")
+
+ecran.onkeypress(t2_haut, "o")
+ecran.onkeypress(t2_bas, "l")
+ecran.onkeypress(t2_gauche, "k")
+ecran.onkeypress(t2_droite, "m")
+
+# -------------------------
+# BOUCLES DU JEU (Intervalle réglé à 30ms pour éviter le lag)
+# -------------------------
+
+def boucle_jeu():
+    global active1, active2
+
+    if active1:
+        if touche_un_trait1():
+            active1 = False
+            tortue1.color("black")
+            print("Tortue 1 a perdu !")
+        else:
+            pos1 = tortue1.pos()
+            if not positions1 or positions1[-1] != pos1:
+                positions1.append(pos1)
+
+    if active2:
+        if touche_un_trait2():
+            active2 = False
+            tortue2.color("black")
+            print("Tortue 2 a perdu !")
+        else:
+            pos2 = tortue2.pos()
+            if not positions2 or positions2[-1] != pos2:
+                positions2.append(pos2)
+
+    if active1 and active2:
+        ecran.ontimer(boucle_jeu, 30)
+
+# Lancement
+boucle_jeu()
+ecran.mainloop()
